@@ -328,12 +328,262 @@ logistica.PlanificarEntrega();
 ```
 El código cliente decide en tiempo de ejecución qué tipo de logística utilizar y, por ende, qué tipo de transporte se creará.
 
-
-
-
-
-
 ## Patrón Abstract Factory
+En situaciones donde se requiere crear familias de objetos relacionados o dependientes sin especificar sus clases concretas, el Patrón Abstract Factory es muy útil. Por ejemplo, en una aplicación que maneja interfaces de usuario para diferentes sistemas operativos (Windows, MacOS), queremos crear componentes de interfaz (Botones, Checkboxes) específicos para cada sistema operativo, pero sin cambiar el código cliente.
+
+El patrón Abstract Factory nos permite crear fábricas que producen familias de objetos relacionados, asegurando que los productos creados sean compatibles entre sí.
+
+
+```c#
+using System;
+
+// Interfaces de Productos
+public interface IBoton
+{
+    void Render();
+}
+
+public interface ICheckbox
+{
+    void Render();
+}
+
+// Productos Concretos para Windows
+public class BotonWindows : IBoton
+{
+    public void Render()
+    {
+        Console.WriteLine("Renderizando un botón estilo Windows.");
+    }
+}
+
+public class CheckboxWindows : ICheckbox
+{
+    public void Render()
+    {
+        Console.WriteLine("Renderizando un checkbox estilo Windows.");
+    }
+}
+
+// Productos Concretos para MacOS
+public class BotonMac : IBoton
+{
+    public void Render()
+    {
+        Console.WriteLine("Renderizando un botón estilo MacOS.");
+    }
+}
+
+public class CheckboxMac : ICheckbox
+{
+    public void Render()
+    {
+        Console.WriteLine("Renderizando un checkbox estilo MacOS.");
+    }
+}
+
+// Interfaz de Fábrica Abstracta
+public interface IFabricaGUI
+{
+    IBoton CrearBoton();
+    ICheckbox CrearCheckbox();
+}
+
+// Fábricas Concretas
+public class FabricaWindows : IFabricaGUI
+{
+    public IBoton CrearBoton()
+    {
+        return new BotonWindows();
+    }
+
+    public ICheckbox CrearCheckbox()
+    {
+        return new CheckboxWindows();
+    }
+}
+
+public class FabricaMac : IFabricaGUI
+{
+    public IBoton CrearBoton()
+    {
+        return new BotonMac();
+    }
+
+    public ICheckbox CrearCheckbox()
+    {
+        return new CheckboxMac();
+    }
+}
+
+// Clase Cliente
+public class Aplicacion
+{
+    private IBoton _boton;
+    private ICheckbox _checkbox;
+
+    public Aplicacion(IFabricaGUI fabrica)
+    {
+        _boton = fabrica.CrearBoton();
+        _checkbox = fabrica.CrearCheckbox();
+    }
+
+    public void Renderizar()
+    {
+        _boton.Render();
+        _checkbox.Render();
+    }
+}
+
+public class Program
+{
+    public static void Main()
+    {
+        // El cliente decide qué fábrica utilizar en tiempo de ejecución
+        IFabricaGUI fabrica;
+
+        Console.WriteLine("Ingrese el sistema operativo (Windows/Mac):");
+        string so = Console.ReadLine();
+
+        if (so.ToLower() == "windows")
+        {
+            fabrica = new FabricaWindows();
+        }
+        else if (so.ToLower() == "mac")
+        {
+            fabrica = new FabricaMac();
+        }
+        else
+        {
+            Console.WriteLine("Sistema operativo desconocido.");
+            return;
+        }
+
+        // Crea la aplicación con la fábrica seleccionada
+        Aplicacion app = new Aplicacion(fabrica);
+        app.Renderizar();
+    }
+}
+
+```
+
+### Explicación
+En esta implementación:
+
+- Interfaces de Productos (IBoton, ICheckbox): Definen los métodos que los productos concretos deben implementar.
+- Productos Concretos:
+    - Para Windows: BotonWindows y CheckboxWindows.
+    - Para MacOS: BotonMac y CheckboxMac.
+Cada uno implementa las interfaces correspondientes y proporciona implementaciones específicas.
+
+- Interfaz de Fábrica Abstracta (IFabricaGUI): Declara los métodos para crear cada tipo de producto.
+
+- Fábricas Concretas:
+    - FabricaWindows: Crea productos estilo Windows.
+    - FabricaMac: Crea productos estilo MacOS.
+Implementan la interfaz IFabricaGUI y devuelven instancias de los productos concretos.
+- Clase Cliente (Aplicacion): Utiliza la fábrica para crear los productos y los utiliza sin conocer sus clases concretas.
+
+En el método Main:
+- Solicitamos al usuario que ingrese el sistema operativo.
+- Creamos una instancia de la fábrica correspondiente en tiempo de ejecución.
+- Creamos la aplicación pasando la fábrica seleccionada.
+- Llamamos al método Renderizar para mostrar los componentes de interfaz.
+
+### Partes Clave del Código
+- Interfaces de Productos
+```c#
+public interface IBoton
+{
+    void Render();
+}
+
+public interface ICheckbox
+{
+    void Render();
+}
+
+```
+Definen los contratos que todos los productos deben cumplir.
+- Fábrica Abstracta
+```c#
+public interface IFabricaGUI
+{
+    IBoton CrearBoton();
+    ICheckbox CrearCheckbox();
+}
+
+```
+Declara los métodos para crear cada tipo de producto.
+- Fábricas Concretas
+```c#
+public class FabricaWindows : IFabricaGUI
+{
+    public IBoton CrearBoton()
+    {
+        return new BotonWindows();
+    }
+
+    public ICheckbox CrearCheckbox()
+    {
+        return new CheckboxWindows();
+    }
+}
+
+```
+Proporcionan las implementaciones específicas para crear productos concretos.
+- Clase Cliente que Utiliza la Fábrica
+```c#
+public class Aplicacion
+{
+    private IBoton _boton;
+    private ICheckbox _checkbox;
+
+    public Aplicacion(IFabricaGUI fabrica)
+    {
+        _boton = fabrica.CrearBoton();
+        _checkbox = fabrica.CrearCheckbox();
+    }
+
+    public void Renderizar()
+    {
+        _boton.Render();
+        _checkbox.Render();
+    }
+}
+
+```
+La clase cliente utiliza la fábrica para crear productos y no necesita conocer las clases concretas.
+
+- Uso en el Método Main
+
+```c#
+IFabricaGUI fabrica;
+
+Console.WriteLine("Ingrese el sistema operativo (Windows/Mac):");
+string so = Console.ReadLine();
+
+if (so.ToLower() == "windows")
+{
+    fabrica = new FabricaWindows();
+}
+else if (so.ToLower() == "mac")
+{
+    fabrica = new FabricaMac();
+}
+else
+{
+    Console.WriteLine("Sistema operativo desconocido.");
+    return;
+}
+
+Aplicacion app = new Aplicacion(fabrica);
+app.Renderizar();
+
+```
+
+El cliente selecciona la fábrica apropiada y crea la aplicación con ella.
+
 
 
 ## Patrón Builder
