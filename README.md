@@ -20,5 +20,18 @@ Instrucciones:
 - Explica cómo tu implementación aplica el patrón de diseño y resuelve el problema.
 - Destaca las partes clave de tu código donde se implementa el patrón
 
-## Patron Singelton
+
+## Patrón Singleton
+
+
+## Patrón Factory Method
+
+
+## Patrón Abstract Factory
+
+
+## Patrón Builder
+
+
+## Patrón Bridge
 
