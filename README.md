@@ -24,11 +24,11 @@ Instrucciones:
 [Link de .NET Fiddle](https://dotnetfiddle.net/)
 
 ## Links
-[Link de .NET Fiddle del Patrón Singleton](https://dotnetfiddle.net/7pQT27)
-[Link de .NET Fiddle del Patrón Factory Method](https://dotnetfiddle.net/nEflnt)
-[Link de .NET Fiddle del Patrón Abstract Factory](https://dotnetfiddle.net/kVaKQd)
-[Link de .NET Fiddle del Patrón Builder](https://dotnetfiddle.net/STAI6L)
-[Link de .NET Fiddle del Patrón Bridge](https://dotnetfiddle.net/tkYDXH)
+- [Link de .NET Fiddle del Patrón Singleton](https://dotnetfiddle.net/7pQT27)
+- [Link de .NET Fiddle del Patrón Factory Method](https://dotnetfiddle.net/nEflnt)
+- [Link de .NET Fiddle del Patrón Abstract Factory](https://dotnetfiddle.net/kVaKQd)
+- [Link de .NET Fiddle del Patrón Builder](https://dotnetfiddle.net/STAI6L)
+- [Link de .NET Fiddle del Patrón Bridge](https://dotnetfiddle.net/tkYDXH)
 
 ## Patrón Singleton
 En aplicaciones grandes, es común tener un sistema de registro de logs para rastrear eventos, errores y otras informaciones importantes. Queremos asegurarnos de que todas las partes de la aplicación utilicen el mismo objeto de registro para mantener la consistencia y evitar problemas como conflictos de acceso o duplicación de recursos.
