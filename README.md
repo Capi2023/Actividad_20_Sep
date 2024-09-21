@@ -333,6 +333,7 @@ En situaciones donde se requiere crear familias de objetos relacionados o depend
 
 El patrón Abstract Factory nos permite crear fábricas que producen familias de objetos relacionados, asegurando que los productos creados sean compatibles entre sí.
 
+[Link de .NET Fiddle del Patrón Abstract Factory](https://dotnetfiddle.net/kVaKQd)
 
 ```c#
 using System;
