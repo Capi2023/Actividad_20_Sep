@@ -122,28 +122,7 @@ En el método Main:
 private Logger() { }
 ```
 Previene la creación de instancias desde fuera de la clase.
-- Propiedad Instance con Doble Verificación:
 
-```c#
-public static Logger Instance
-{
-    get
-    {
-        if (_instance == null)
-        {
-            lock (_lock)
-            {
-                if (_instance == null)
-                {
-                    _instance = new Logger();
-                }
-            }
-        }
-        return _instance;
-    }
-}
-```
-Garantiza que solo se crea una instancia de Logger, incluso en entornos multi-hilo.
 - Uso del Logger en Main:
 
 ```c#
@@ -264,14 +243,6 @@ public interface ITransporte
 ```
 Define el contrato que todos los transportes deben cumplir.
 
-### Clases Concretas de Transporte:
-```c#
-public class Camion : ITransporte { /* ... */ }
-public class Barco : ITransporte { /* ... */ }
-
-```
-Implementan la interfaz ITransporte y proporcionan las implementaciones específicas.
-
 - Clase Abstracta Logistica con Método Factory:
 
 ```c#
@@ -297,8 +268,8 @@ public class LogisticaTerrestre : Logistica
         return new Camion();
     }
 }
-
 ```
+
 Proporcionan la implementación concreta del método Factory para crear un tipo específico de transporte.
 
 - Uso en el Método Main:
@@ -516,23 +487,7 @@ public interface IFabricaGUI
 
 ```
 Declara los métodos para crear cada tipo de producto.
-- Fábricas Concretas
-```c#
-public class FabricaWindows : IFabricaGUI
-{
-    public IBoton CrearBoton()
-    {
-        return new BotonWindows();
-    }
 
-    public ICheckbox CrearCheckbox()
-    {
-        return new CheckboxWindows();
-    }
-}
-
-```
-Proporcionan las implementaciones específicas para crear productos concretos.
 - Clase Cliente que Utiliza la Fábrica
 ```c#
 public class Aplicacion
@@ -582,13 +537,244 @@ Aplicacion app = new Aplicacion(fabrica);
 app.Renderizar();
 
 ```
-
 El cliente selecciona la fábrica apropiada y crea la aplicación con ella.
 
-
-
 ## Patrón Builder
+El Patrón Builder es útil cuando necesitamos crear objetos complejos paso a paso. Por ejemplo, al construir distintos tipos de vehículos (Auto, Moto, Bicicleta), podemos necesitar ensamblar diferentes partes opcionales y queremos simplificar el proceso de construcción.
 
+[Link de .NET Fiddle del Patrón Builder](https://dotnetfiddle.net/STAI6L)
+
+```c#
+using System;
+
+// Producto
+public class Vehiculo
+{
+    public string Tipo { get; set; }
+    public int Ruedas { get; set; }
+    public string Motor { get; set; }
+    public bool AireAcondicionado { get; set; }
+
+    public void Mostrar()
+    {
+        Console.WriteLine("Tipo: " + Tipo);
+        Console.WriteLine("Ruedas: " + Ruedas);
+        Console.WriteLine("Motor: " + Motor);
+        Console.WriteLine("Aire Acondicionado: " + AireAcondicionado);
+    }
+}
+
+// Interfaz Builder
+public interface IVehiculoBuilder
+{
+    void ConstruirChasis();
+    void InstalarMotor();
+    void ColocarRuedas();
+    void AgregarExtras();
+    Vehiculo ObtenerVehiculo();
+}
+
+// Builders Concretos
+public class AutoBuilder : IVehiculoBuilder
+{
+    private Vehiculo _vehiculo = new Vehiculo();
+
+    public void ConstruirChasis()
+    {
+        _vehiculo.Tipo = "Auto";
+    }
+
+    public void InstalarMotor()
+    {
+        _vehiculo.Motor = "Motor de Auto";
+    }
+
+    public void ColocarRuedas()
+    {
+        _vehiculo.Ruedas = 4;
+    }
+
+    public void AgregarExtras()
+    {
+        _vehiculo.AireAcondicionado = true;
+    }
+
+    public Vehiculo ObtenerVehiculo()
+    {
+        return _vehiculo;
+    }
+}
+
+public class MotoBuilder : IVehiculoBuilder
+{
+    private Vehiculo _vehiculo = new Vehiculo();
+
+    public void ConstruirChasis()
+    {
+        _vehiculo.Tipo = "Moto";
+    }
+
+    public void InstalarMotor()
+    {
+        _vehiculo.Motor = "Motor de Moto";
+    }
+
+    public void ColocarRuedas()
+    {
+        _vehiculo.Ruedas = 2;
+    }
+
+    public void AgregarExtras()
+    {
+        _vehiculo.AireAcondicionado = false;
+    }
+
+    public Vehiculo ObtenerVehiculo()
+    {
+        return _vehiculo;
+    }
+}
+
+// Director
+public class Director
+{
+    public void Construir(IVehiculoBuilder builder)
+    {
+        builder.ConstruirChasis();
+        builder.InstalarMotor();
+        builder.ColocarRuedas();
+        builder.AgregarExtras();
+    }
+}
+
+public class Program
+{
+    public static void Main()
+    {
+        Director director = new Director();
+        IVehiculoBuilder builder;
+
+        Console.WriteLine("Ingrese el tipo de vehículo a construir (auto/moto):");
+        string tipo = Console.ReadLine();
+
+        if (tipo.ToLower() == "auto")
+        {
+            builder = new AutoBuilder();
+        }
+        else if (tipo.ToLower() == "moto")
+        {
+            builder = new MotoBuilder();
+        }
+        else
+        {
+            Console.WriteLine("Tipo de vehículo desconocido.");
+            return;
+        }
+
+        director.Construir(builder);
+        Vehiculo vehiculo = builder.ObtenerVehiculo();
+        vehiculo.Mostrar();
+    }
+}
+
+```
+
+### Explicación
+- Producto Vehiculo: Clase que representa el objeto complejo a construir.
+- Interfaz IVehiculoBuilder: Declara los métodos para construir las partes del vehículo.
+- Builders Concretos: AutoBuilder y MotoBuilder implementan los pasos específicos.
+- Director: Clase que controla el proceso de construcción usando el builder.
+- Uso en Main: El usuario elige el tipo de vehículo, el director coordina la construcción, y se muestra el resultado.
+
+### Partes Clave del Código
+- Clase Vehiculo con Método Mostrar
+```c#
+public class Vehiculo
+{
+    public string Tipo { get; set; }
+    public int Ruedas { get; set; }
+    public string Motor { get; set; }
+    public bool AireAcondicionado { get; set; }
+
+    public void Mostrar()
+    {
+        Console.WriteLine("Tipo: " + Tipo);
+        Console.WriteLine("Ruedas: " + Ruedas);
+        Console.WriteLine("Motor: " + Motor);
+        Console.WriteLine("Aire Acondicionado: " + AireAcondicionado);
+    }
+}
+
+```
+
+- Interfaz IVehiculoBuilder
+```c#
+public interface IVehiculoBuilder
+{
+    void ConstruirChasis();
+    void InstalarMotor();
+    void ColocarRuedas();
+    void AgregarExtras();
+    Vehiculo ObtenerVehiculo();
+}
+
+```
+
+- Builders Concretos
+```c#
+public class AutoBuilder : IVehiculoBuilder
+{
+    private Vehiculo _vehiculo = new Vehiculo();
+
+    public void ConstruirChasis()
+    {
+        _vehiculo.Tipo = "Auto";
+    }
+
+    public void InstalarMotor()
+    {
+        _vehiculo.Motor = "Motor de Auto";
+    }
+
+    public void ColocarRuedas()
+    {
+        _vehiculo.Ruedas = 4;
+    }
+
+    public void AgregarExtras()
+    {
+        _vehiculo.AireAcondicionado = true;
+    }
+
+    public Vehiculo ObtenerVehiculo()
+    {
+        return _vehiculo;
+    }
+}
+
+```
+- Clase Director
+```c#
+public class Director
+{
+    public void Construir(IVehiculoBuilder builder)
+    {
+        builder.ConstruirChasis();
+        builder.InstalarMotor();
+        builder.ColocarRuedas();
+        builder.AgregarExtras();
+    }
+}
+
+```
 
 ## Patrón Bridge
+
+
+
+
+
+
+
+
 
