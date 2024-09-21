@@ -769,12 +769,103 @@ public class Director
 ```
 
 ## Patrón Bridge
+El Patrón Bridge es útil cuando queremos separar una abstracción de su implementación, permitiendo que ambas puedan variar independientemente. Por ejemplo, al desarrollar una aplicación gráfica que dibuja formas (como círculos) en diferentes plataformas (Windows, Linux), queremos que las formas y los métodos de dibujo sean independientes.
 
+[Link de .NET Fiddle del Patrón Bridge](https://dotnetfiddle.net/tkYDXH)
 
+```c#
+using System;
 
+// Implementación
+public interface IDibujo
+{
+    void DibujarCirculo(int x, int y, int radio);
+}
 
+// Implementaciones Concretas
+public class DibujoWindows : IDibujo
+{
+    public void DibujarCirculo(int x, int y, int radio)
+    {
+        Console.WriteLine("Dibujando círculo en Windows en posición (" + x + ", " + y + ") con radio " + radio);
+    }
+}
 
+public class DibujoLinux : IDibujo
+{
+    public void DibujarCirculo(int x, int y, int radio)
+    {
+        Console.WriteLine("Dibujando círculo en Linux en posición (" + x + ", " + y + ") con radio " + radio);
+    }
+}
 
+// Abstracción
+public abstract class Forma
+{
+    protected IDibujo _dibujo;
+
+    protected Forma(IDibujo dibujo)
+    {
+        _dibujo = dibujo;
+    }
+
+    public abstract void Dibujar();
+}
+
+// Abstracción Refinada
+public class Circulo : Forma
+{
+    private int _x, _y, _radio;
+
+    public Circulo(int x, int y, int radio, IDibujo dibujo) : base(dibujo)
+    {
+        _x = x;
+        _y = y;
+        _radio = radio;
+    }
+
+    public override void Dibujar()
+    {
+        _dibujo.DibujarCirculo(_x, _y, _radio);
+    }
+}
+
+public class Program
+{
+    public static void Main()
+    {
+        Console.WriteLine("Seleccione la plataforma de dibujo (windows/linux):");
+        string plataforma = Console.ReadLine();
+
+        IDibujo dibujo;
+
+        if (plataforma.ToLower() == "windows")
+        {
+            dibujo = new DibujoWindows();
+        }
+        else if (plataforma.ToLower() == "linux")
+        {
+            dibujo = new DibujoLinux();
+        }
+        else
+        {
+            Console.WriteLine("Plataforma desconocida.");
+            return;
+        }
+
+        Forma circulo = new Circulo(10, 20, 30, dibujo);
+        circulo.Dibujar();
+    }
+}
+
+```
+
+### Explicación
+- Interfaz IDibujo: Define los métodos que las implementaciones concretas deben implementar.
+- Implementaciones Concretas: DibujoWindows y DibujoLinux proporcionan implementaciones específicas para cada plataforma.
+- Clase Abstracción Forma: Mantiene una referencia a IDibujo y declara el método abstracto Dibujar.
+- Clase Abstracción Refinada Circulo: Implementa Forma y utiliza IDibujo para dibujar el círculo.
+- Uso en Main: El usuario selecciona la plataforma, se crea la implementación correspondiente, y se utiliza para dibujar la forma.
 
 
 
