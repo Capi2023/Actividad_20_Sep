@@ -153,6 +153,184 @@ Logger logger2 = Logger.Instance;
 Demuestra que logger1 y logger2 son la misma instancia.
 
 ## Patrón Factory Method
+En aplicaciones que requieren la creación de objetos sin especificar la clase exacta del objeto que se va a crear, el Patrón Factory Method es muy útil. Por ejemplo, en una aplicación de logística, podemos tener diferentes tipos de transporte (Camión, Barco, Avión) y queremos que el sistema decida qué tipo de transporte utilizar en tiempo de ejecución sin cambiar el código cliente.
+
+El patrón Factory Method nos permite definir una interfaz para crear objetos, pero deja que las subclases decidan qué clase instanciar. De esta manera, el código cliente trabaja con interfaces en lugar de clases concretas.
+
+[Link de .NET Fiddle del Patrón Factory Method](https://dotnetfiddle.net/nEflnt)
+
+```c#
+using System;
+
+public interface ITransporte
+{
+    void Entregar();
+}
+
+public class Camion : ITransporte
+{
+    public void Entregar()
+    {
+        Console.WriteLine("Entrega por carretera en camión.");
+    }
+}
+
+public class Barco : ITransporte
+{
+    public void Entregar()
+    {
+        Console.WriteLine("Entrega por mar en barco.");
+    }
+}
+
+public abstract class Logistica
+{
+    // Método Factory
+    public abstract ITransporte CrearTransporte();
+
+    public void PlanificarEntrega()
+    {
+        ITransporte transporte = CrearTransporte();
+        transporte.Entregar();
+    }
+}
+
+public class LogisticaTerrestre : Logistica
+{
+    public override ITransporte CrearTransporte()
+    {
+        return new Camion();
+    }
+}
+
+public class LogisticaMaritima : Logistica
+{
+    public override ITransporte CrearTransporte()
+    {
+        return new Barco();
+    }
+}
+
+public class Program
+{
+    public static void Main()
+    {
+        // Cliente decide el tipo de logística en tiempo de ejecución
+        Logistica logistica;
+
+        Console.WriteLine("Ingrese el tipo de logística (terrestre/maritima):");
+        string tipo = Console.ReadLine();
+
+        if (tipo.ToLower() == "terrestre")
+        {
+            logistica = new LogisticaTerrestre();
+        }
+        else if (tipo.ToLower() == "maritima")
+        {
+            logistica = new LogisticaMaritima();
+        }
+        else
+        {
+            Console.WriteLine("Tipo de logística desconocido.");
+            return;
+        }
+
+        // Planifica la entrega usando el transporte adecuado
+        logistica.PlanificarEntrega();
+    }
+}
+
+```
+### Explicación
+En esta implementación:
+- Interfaz ITransporte: Define el método Entregar que será implementado por los transportes concretos.
+- Clases Concretas Camion y Barco: Implementan la interfaz ITransporte y proporcionan la implementación específica del método Entregar.
+- Clase Abstracta Logistica: Declara el método Factory abstracto CrearTransporte y un método PlanificarEntrega que utiliza el transporte creado.
+- Clases Concretas de Logística: LogisticaTerrestre y LogisticaMaritima implementan el método Factory para devolver instancias de Camion y Barco, respectivamente.
+
+En el método Main:
+- Solicitamos al usuario que ingrese el tipo de logística.
+- Creamos una instancia de la clase de logística adecuada en tiempo de ejecución.
+- Llamamos al método PlanificarEntrega, que utiliza el método Factory CrearTransporte para obtener el transporte correcto y realizar la entrega.
+
+### Partes Clave del Código
+- Interfaz ITransporte:
+
+```c#
+public interface ITransporte
+{
+    void Entregar();
+}
+```
+Define el contrato que todos los transportes deben cumplir.
+
+### Clases Concretas de Transporte:
+```c#
+public class Camion : ITransporte { /* ... */ }
+public class Barco : ITransporte { /* ... */ }
+
+```
+Implementan la interfaz ITransporte y proporcionan las implementaciones específicas.
+
+- Clase Abstracta Logistica con Método Factory:
+
+```c#
+public abstract class Logistica
+{
+    public abstract ITransporte CrearTransporte();
+    public void PlanificarEntrega()
+    {
+        ITransporte transporte = CrearTransporte();
+        transporte.Entregar();
+    }
+}
+
+```
+Declara el método Factory CrearTransporte y utiliza el objeto creado en PlanificarEntrega.
+
+- Clases Concretas que Implementan el Método Factory:
+```c#
+public class LogisticaTerrestre : Logistica
+{
+    public override ITransporte CrearTransporte()
+    {
+        return new Camion();
+    }
+}
+
+```
+Proporcionan la implementación concreta del método Factory para crear un tipo específico de transporte.
+
+- Uso en el Método Main:
+
+```c#
+Logistica logistica;
+
+Console.WriteLine("Ingrese el tipo de logística (terrestre/maritima):");
+string tipo = Console.ReadLine();
+
+if (tipo.ToLower() == "terrestre")
+{
+    logistica = new LogisticaTerrestre();
+}
+else if (tipo.ToLower() == "maritima")
+{
+    logistica = new LogisticaMaritima();
+}
+else
+{
+    Console.WriteLine("Tipo de logística desconocido.");
+    return;
+}
+
+logistica.PlanificarEntrega();
+
+```
+El código cliente decide en tiempo de ejecución qué tipo de logística utilizar y, por ende, qué tipo de transporte se creará.
+
+
+
+
 
 
 ## Patrón Abstract Factory
