@@ -1,5 +1,6 @@
 # Actividad_20_Sep
 Actividad dia 20 de septiembre REPASO DE PDD EXPUESTOS
+Emiliano García Cordero - 20211779
 
 ## Actividad: Implementación de Patrones de Diseño en C#
 Objetivo: Invitar a los estudiantes a elaborar ejercicios prácticos implementando los patrones de diseño estudiados, utilizando ejemplos del mundo real y presentando el código funcionando en DotNetFiddle.
